@@ -21,7 +21,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
-import com.marolabs.io.EntryPath;
+import com.marolabs.io.mar.file.EntryPath;
 
 public class EntryPathAttribute implements EntryAttribute<EntryPath> {
 	private EntryPath val = new EntryPath();

@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import com.marolabs.io.EntryPath;
 import com.marolabs.io.PathType;
+import com.marolabs.io.mar.file.EntryPath;
 
 public class EntryAttributes implements BasicFileAttributes {
 	Map<String, EntryAttribute<?>> attrs = new HashMap<>();

@@ -29,7 +29,7 @@ import java.nio.file.WatchKey;
 import java.nio.file.WatchService;
 import java.util.Iterator;
 
-public class MaroPath implements Path {
+public class MaroFSPath implements Path {
 	private String[] str_path;
 
 	@Override

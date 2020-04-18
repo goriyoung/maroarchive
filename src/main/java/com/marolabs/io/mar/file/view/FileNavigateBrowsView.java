@@ -29,7 +29,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.marolabs.io.EntryPath;
+import com.marolabs.io.mar.file.EntryPath;
 import com.marolabs.io.mar.file.attr.EntryAttributes;
 import com.marolabs.io.stream.NInputStream;
 import com.marolabs.io.stream.NOutputStream;
@@ -201,8 +201,8 @@ public class FileNavigateBrowsView extends AbstractFileBrowsView {
 	@Override
 	public Vendor vendor() {
 		Vendor vendor = new Vendor();
-		vendor.name = "Yang Feng";
-		vendor.company = "Marolabs";
+		vendor.name = "Funtune";
+		vendor.company = "Marolabs Co,Ltd";
 		return vendor;
 	}
 

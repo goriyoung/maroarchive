@@ -274,7 +274,7 @@ public class Node {
 	public static void main(String[] args) throws IOException {
 		Node root_node = new Node(null);
 		root_node.name = "root";
-		File root_file = new File("/Users/marolabs/Downloads/db-6.2.23");
+		File root_file = new File("");
 		test_file(root_node, root_file);
 
 		root_node.print(System.out);

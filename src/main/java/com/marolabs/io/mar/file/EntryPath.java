@@ -15,7 +15,7 @@
  * limitations under the License.
  * 
  */
-package com.marolabs.io;
+package com.marolabs.io.mar.file;
 
 import java.io.DataInput;
 import java.io.DataOutput;
