@@ -68,7 +68,6 @@ import com.marolabs.media.image.ImageGraper.ImageType;
 import com.marolabs.util.Bitz;
 import com.marolabs.util.Filter;
 import com.marolabs.util.ImageUtils;
-import com.marolabs.util.MCallback;
 import com.marolabs.util.Utils;
 import com.marolabs.util.pool.ArrayPool;
 import com.marolabs.util.pool.ByteBufferPool;
@@ -653,20 +652,21 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 
 		@Override
 		public synchronized void write(int b) throws IOException {
-			if (b1 == null)
+			if (b1 == null) {
 				b1 = new byte[1];
+			}
 			b1[0] = (byte) b;
 			this.write(b1);
 		}
 
 		@Override
 		public synchronized void write(byte[] bs, int off, int len) throws IOException {
-			if ((off < 0) || (off > bs.length) || (len < 0) || ((off + len) > bs.length) || ((off + len) < 0)) {
+			if (off < 0 || off > bs.length || len < 0 || off + len > bs.length || off + len < 0) {
 				throw new IndexOutOfBoundsException();
 			} else if (len == 0) {
 				return;
 			}
-			ByteBuffer bb = ((this.bs == bs) ? this.bb : ByteBuffer.wrap(bs));
+			ByteBuffer bb = this.bs == bs ? this.bb : ByteBuffer.wrap(bs);
 			bb.limit(Math.min(off + len, bb.capacity()));
 			bb.position(off);
 			this.bb = bb;
@@ -674,8 +674,9 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 
 			while (bb.remaining() > 0) {
 				int n = channel.write(bb);
-				if (n <= 0)
+				if (n <= 0) {
 					throw new RuntimeException("no bytes written");
+				}
 			}
 		}
 
@@ -861,8 +862,9 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 		}
 
 		public synchronized void addChunk(BlockedChunk chunk) throws IOException {
-			if (!exists(chunk.id()))
+			if (!exists(chunk.id())) {
 				chunk_count++;
+			}
 
 			int pageID = chunk.pageID();
 
@@ -891,7 +893,7 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 				}
 
 				chunk.setValid(false);
-				;
+				
 
 				try {
 					chunk.writeTo(page_manage.chunk_offset(chunkID), data_source);
@@ -1393,8 +1395,9 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 			byte[] array = ArrayPool.alloc_byte(4096);
 			for (int id = 0; id < rpak.getChunkCount(); id++) {
 				File chunkF = new File(root, id + ".jpg");
-				if (chunkF.exists())
+				if (chunkF.exists()) {
 					chunkF.delete();
+				}
 				chunkF.createNewFile();
 
 				FileOutputStream outputStream = new FileOutputStream(chunkF);
@@ -1421,25 +1424,21 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 		final ByteBuffer data = ByteBuffer.allocate(1024);
 		while (true) {
 			final int fCount = count;
-			Runnable run = new Runnable() {
+			Runnable run = () -> {
+				DataSource ds = srcs[fCount % srcs.length];
 
-				@Override
-				public void run() {
-					DataSource ds = srcs[fCount % srcs.length];
+				try {
+					ds.position(fCount * data.capacity());
+					ds.write(data);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
 
-					try {
-						ds.position(fCount * data.capacity());
-						ds.write(data);
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-
-					data.clear();
-					try {
-						Thread.sleep(100);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
+				data.clear();
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
 			};
 
@@ -1451,24 +1450,21 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 
 	private static void test_exist_pic(Path path) throws IOException {
 		final MaroArchive mar = new MaroArchive(VolumeFileDataSource.create(Paths.get("test_exist_pic.mar"), 1 << 23), true);
-		Utils.vist_file_tree(path, PathFilters.FILTER_FILE, null, new MCallback<Path, FileVisitResult>() {
+		Utils.vist_file_tree(path, PathFilters.FILTER_FILE, null, _path -> {
 
-			@Override
-			public FileVisitResult call(Path param) {
-				byte[] data;
-				try {
-					data = Files.readAllBytes(param);
-					MarEntry entry = mar.findSpareEntry();
-					entry.setAttributes(new EntryAttributes(param));
-					OutputStream os = entry.openWriteStream();
-					os.write(data, 0, data.length);
+			MarEntry entry = mar.findSpareEntry();
+			
+			try (OutputStream os = entry.openWriteStream()){
+				entry.setAttributes(new EntryAttributes(_path));
+				
+				byte[] data = Files.readAllBytes(_path);
+				
+				os.write(data, 0, data.length);
 
-					os.close();
-				} catch (IOException e) {
-				}
-
-				return FileVisitResult.CONTINUE;
+			} catch (IOException e) {
 			}
+
+			return FileVisitResult.CONTINUE;
 		});
 
 		System.out.println("Chunk Count = " + mar.getChunkCount());
@@ -1498,7 +1494,7 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 
 			Rectangle rect = fm.getStringBounds(str, g2d).getBounds();
 			float index = count;
-			Color bgColor = new Color(Color.HSBtoRGB((i % 28) / 30f, (15 + rand.nextInt(i) % 15) / 30f, (10 + rand.nextInt(i) % 10) / 20f));
+			Color bgColor = new Color(Color.HSBtoRGB(i % 28 / 30f, (15 + rand.nextInt(i) % 15) / 30f, (10 + rand.nextInt(i) % 10) / 20f));
 			Paint paint = new GradientPaint(0, 0, bgColor.brighter().brighter(), width, height, bgColor.darker());
 			g2d.setPaint(paint);
 			g2d.fillRect(0, 0, width, height);
@@ -1509,7 +1505,7 @@ public class MaroArchive implements MaroArchiveConstants, Closeable {
 			g2d.drawLine(width / 2, 0, width / 2, height);
 
 			int radias = width / 3;
-			float dash[] = { (i % 10) + 5 };
+			float dash[] = { i % 10 + 5 };
 			BasicStroke b = new BasicStroke(1.0f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dash, 0.0f);
 
 			g2d.setStroke(b);

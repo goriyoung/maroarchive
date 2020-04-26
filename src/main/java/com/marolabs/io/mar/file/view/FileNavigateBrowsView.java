@@ -33,13 +33,22 @@ import com.marolabs.io.mar.file.EntryPath;
 import com.marolabs.io.mar.file.attr.EntryAttributes;
 import com.marolabs.io.stream.NInputStream;
 import com.marolabs.io.stream.NOutputStream;
-import com.marolabs.util.MCallback;
+import com.marolabs.plugin.PluginException;
+import com.marolabs.plugin.PluginManager;
 import com.marolabs.util.Utils;
 import com.marolabs.util.Vendor;
 
 public class FileNavigateBrowsView extends AbstractFileBrowsView {
 	private final static long pluginUUID = 0xffff0001;
 
+	static
+	{
+		try {
+			PluginManager.register(FileNavigateBrowsView.class);
+		} catch (PluginException e) {
+			System.out.println("Load Plugin Failed. " + e);
+		}
+	}
 	private FileNavigateBrowsView() {
 	}
 
@@ -157,17 +166,13 @@ public class FileNavigateBrowsView extends AbstractFileBrowsView {
 		final FileNavigateBrowsView view = new FileNavigateBrowsView();
 		final AtomicInteger count = new AtomicInteger();
 		final Path start = Paths.get("");
-		Utils.vist_file_tree(start, null, null, new MCallback<Path, FileVisitResult>() {
+		Utils.vist_file_tree(start, null, null, param -> {
+			// view.addPath(new EntryPath(param), count.getAndIncrement());
 
-			@Override
-			public FileVisitResult call(Path param) {
-				// view.addPath(new EntryPath(param), count.getAndIncrement());
-
-				if (count.get() % 1000 == 0) {
-					System.out.println(count);
-				}
-				return FileVisitResult.CONTINUE;
+			if (count.get() % 1000 == 0) {
+				System.out.println(count);
 			}
+			return FileVisitResult.CONTINUE;
 		});
 
 		// view.root.print(System.out);

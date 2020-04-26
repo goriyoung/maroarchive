@@ -70,7 +70,8 @@ public class EntryPathAttribute implements EntryAttribute<EntryPath> {
 
 	@Override
 	public void setValue(EntryPath val) {
-		if (null != val)
+		if (null != val) {
 			this.val = val;
+		}
 	}
 }

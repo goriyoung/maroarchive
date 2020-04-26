@@ -39,7 +39,7 @@ class BlockedChunkWriteChannel implements WritableByteChannel, MaroArchiveConsta
 	private BlockedChunk chunk = null;
 	private ByteBuffer cur_block_data;
 	private long data_write_num;
-	private List<Integer> block_id_list = new ArrayList<Integer>();
+	private List<Integer> block_id_list = new ArrayList<>();
 
 	private boolean closed;
 

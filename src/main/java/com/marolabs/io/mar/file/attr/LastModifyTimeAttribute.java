@@ -69,7 +69,8 @@ public class LastModifyTimeAttribute implements EntryAttribute<FileTime> {
 
 	@Override
 	public void setValue(FileTime newTime) {
-		if (null != newTime)
+		if (null != newTime) {
 			this.time = newTime;
+		}
 	}
 }

@@ -64,7 +64,8 @@ public class EntrySizeAttribute implements EntryAttribute<Long> {
 
 	@Override
 	public void setValue(Long val) {
-		if (null != val)
+		if (null != val) {
 			this.size = val;
+		}
 	}
 }

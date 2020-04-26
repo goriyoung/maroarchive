@@ -56,8 +56,9 @@ public class EntryPath {
 
 	@Override
 	public String toString() {
-		if (names.length == 1)
+		if (names.length == 1) {
 			return names[0];
+		}
 
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < names.length; i++) {
